@@ -55,20 +55,6 @@ echo -e $green "[ ✔ ] Done installing ...."
 which ruby > /dev/null 2>&1
 sleep 2
 fi
-# check if metasploit-framework is installed
-which msfconsole > /dev/null 2>&1
-if [ "$?" -eq "0" ]; then
-echo -e $green "[ ✔ ] Metasploit-Framework..............[ found ]"
-which msfconsole > /dev/null 2>&1
-sleep 2
-else
-echo -e $red "[ X ] Metasploit-Framework  -> not found "
-echo -e $yellow "[ ! ] Installing Metasploit-Framework "
-sudo apt-get install metasploit-framework -y
-echo -e $green "[ ✔ ] Done installing ...."
-which msfconsole > /dev/null 2>&1
-sleep 2
-fi
 #check if xterm is installed
 which xterm > /dev/null 2>&1
 if [ "$?" -eq "0" ]; then
@@ -86,6 +72,48 @@ sudo apt-get install xterm -y
 clear
 echo -e $green "[ ✔ ] Done installing .... "
 which xterm > /dev/null 2>&1
+fi
+# check if metasploit-framework is installed
+which msfconsole > /dev/null 2>&1
+if [ "$?" -eq "0" ]; then
+echo -e $green "[ ✔ ] Metasploit-Framework..............[ found ]"
+which msfconsole > /dev/null 2>&1
+sleep 2
+else
+echo -e $red "[ X ] Metasploit-Framework  -> not found "
+echo -e $yellow "[ ! ] Installing Metasploit-Framework "
+sudo cp /etc/apt/sources.list /etc/apt/sources.list.backup # backup
+# Second backup created in case user stops the script after this point , then on next startup this script will
+# copy the already changed sources file before as backup , and user lost his original sources lists
+file="/etc/apt/sources.list.avoidz"
+if [ -f "$file" ]
+then
+echo ""
+else
+sudo cp /etc/apt/sources.list /etc/apt/sources.list.avoidz
+fi
+sudo rm -f /etc/apt/sources.list
+sudo touch /etc/apt/sources.list
+sudo echo 'deb http://old.kali.org/kali sana main non-free contrib' >> /etc/apt/sources.list
+sudo echo 'deb-src http://old.kali.org/kali sana main non-free contrib' >> /etc/apt/sources.list
+sudo echo 'deb http://http.kali.org/kali kali-rolling main contrib non-free' >> /etc/apt/sources.list
+sudo echo 'deb-src http://http.kali.org/kali kali-rolling main contrib non-free' >> /etc/apt/sources.list
+xterm -T " Installing Metasploit-Framework " -geometry 100x30 -e "sudo apt-get update && sudo apt-get install metasploit-framework -y"
+sleep 1
+#####################################
+# reback your original repositories 
+#####################################
+sudo rm -f /etc/apt/sources.list
+sudo mv /etc/apt/sources.list.backup /etc/apt/sources.list
+#now we can remove the emergency backup securely
+sudo rm -f /etc/apt/sources.list.avoidz
+sudo rm /var/lib/apt/lists/lock
+sudo apt-get clean
+xterm -T " UPDATE YOUR REPO " -geometry 100x30 -e "sudo apt-get update "
+sleep 1 
+echo -e $green "[ ✔ ] Done installing ...."
+which msfconsole > /dev/null 2>&1
+sleep 2
 fi
 # check if monodevelop exists
 which monodevelop > /dev/null 2>&1
