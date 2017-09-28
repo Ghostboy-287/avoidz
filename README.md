@@ -36,8 +36,6 @@
     4°- Install rubygems:
            sudo gem install colorize
            sudo gem install artii
-           sudo gem install optparse
-           sudo gem install base64
     
     5°- Run avoidz tool == example
            ./avoidz.rb == help command
